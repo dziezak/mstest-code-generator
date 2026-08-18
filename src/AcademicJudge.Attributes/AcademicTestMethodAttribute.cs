@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AcademicJudge.Attributes;
 
@@ -9,6 +10,12 @@ public class AcademicTestMethodAttribute : TestMethodAttribute
     public int TimeLimitMs {get; set; } = 1000;
     public long MaxOperations { get; set; } = -1; // no limit
     public bool IsHidden { get; set; } = false;
+
+    public AcademicTestMethodAttribute(
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0)
+        : base(filePath, lineNumber)
+    {}
 
     public override async Task<TestResult[]> ExecuteAsync(ITestMethod testMethod)
     {

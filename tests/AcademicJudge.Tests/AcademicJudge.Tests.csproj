@@ -12,8 +12,8 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,7 +21,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="task_config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\AcademicJudge.Attributes\AcademicJudge.Attributes.csproj" />
+    <ProjectReference Include="..\..\src\AcademicJudge.Generator\AcademicJudge.Generator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="GeneratedTests\" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,25 @@
+{
+  "TaskName": "GeneratedTask01Tests",
+  "TargetNamespace": "AcademicJudge.Tests",
+  "StudentClassName": "StudentSolution",
+  "MethodName": "Solve",
+  "TimeMultiplier": 1.5,
+  "TestCases": [
+    {
+      "Name": "Test_SumArray_Basic",
+      "Points": 5,
+      "IsHidden": false,
+      "Input": [1, 2, 3, 4],
+      "ExpectedOutput": 10,
+      "CustomTimeLimitMs": 300
+    },
+    {
+      "Name": "Test_SumArray_Zeros",
+      "Points": 2,
+      "IsHidden": true,
+      "Input": [0, 0, 0],
+      "ExpectedOutput": 0,
+      "CustomTimeLimitMs": 100
+    }
+  ]
+}

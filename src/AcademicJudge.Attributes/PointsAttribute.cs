@@ -4,7 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace AcademicJudge.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class PointsAttribute(int points): TestPropertyAttribute("Points", points.ToString())
+public class PointsAttribute: TestPropertyAttribute
 {
-    public int Value { get; } = points;
+    public int PointsValue { get; }
+
+    public PointsAttribute(int points) : base("Points", points.ToString())
+    {
+        PointsValue = points;
+    }
 }
