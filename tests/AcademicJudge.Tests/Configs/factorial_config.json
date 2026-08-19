@@ -1,5 +1,5 @@
 {
-  "TaskName": "GeneratedFactorialTests",
+  "TaskName": "FactorialTests",
   "TargetNamespace": "AcademicJudge.Tests",
   "StudentClassName": "StudentSolution",
   "MethodName": "Solve",
@@ -21,6 +21,18 @@
     {
       "Name": "Test_Factorial_Seven",
       "Input": 7,
+      "ExpectedOutput": null,
+      "Points": 5
+    },
+    {
+      "Name": "Test_Factorial_Massive_With_Answer",
+      "Input": 9,
+      "ExpectedOutput": 362880,
+      "Points": 5
+    },
+    {
+      "Name": "Test_Factorial_Massive_With_No_Answer",
+      "Input": 9,
       "ExpectedOutput": null,
       "Points": 5
     }

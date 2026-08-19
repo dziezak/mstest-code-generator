@@ -1,5 +1,5 @@
 {
-  "TaskName": "GeneratedTask01Tests",
+  "TaskName": "Task01Tests",
   "TargetNamespace": "AcademicJudge.Tests",
   "StudentClassName": "StudentSolution",
   "MethodName": "Solve",

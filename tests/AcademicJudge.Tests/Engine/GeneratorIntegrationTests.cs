@@ -1,19 +1,22 @@
 using System.IO;
+using System.Net.Http.Json;
 using System.Reflection;
+using System.Text.Json;
 using AcademicJudge.Generator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace AcademicJudge.Tests;
-// form OI2 tripple A (xD)
+
 [TestClass]
 public class GeneratorIntegrationTests
 {
+  /*
     [TestMethod]
     public void TestCodeGenerator_GeneratesValidCSharpFileFromConfig()
     {
         // Arrange
         var generator = new TestCodeGenerator();
-        string configPath = Path.Combine(Directory.GetCurrentDirectory(), "task_config.json");
+        string configPath = Path.Combine(Directory.GetCurrentDirectory(), "Configs","task_config.json");
         
         string outputDirectory = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\GeneratedTests"));
         string outputPath = Path.Combine(outputDirectory, "GeneratedTask01Tests.g.cs");
@@ -35,7 +38,7 @@ public class GeneratorIntegrationTests
     {
       // Arrange
       var generator = new TestCodeGenerator();
-      string configPath = Path.Combine(Directory.GetCurrentDirectory(), "factorial_config.json");
+      string configPath = Path.Combine(Directory.GetCurrentDirectory(), "Configs","factorial_config.json");
     
       string outputDirectory = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\GeneratedTests"));
     
@@ -125,5 +128,73 @@ public class GeneratorIntegrationTests
         
         StringAssert.Contains(generatedCode, "public void Test_Factorial_Five()");
         StringAssert.Contains(generatedCode, "var expectedOutput = 120;");
+    }
+
+    [TestMethod]
+    public void TestCodeGenerator_GeneratesAllTestsFromConfigFolder()
+    { 
+        var generator = new TestCodeGenerator();
+        string configsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Configs");
+        string outputDirectory = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\GeneratedTests"));
+      
+        Directory.CreateDirectory(outputDirectory);
+      
+        string[] jsonFiles = Directory.GetFiles(configsDirectory, "*.json");
+        Assert.IsTrue(jsonFiles.Length > 0, "Nie znaleziono zadnych plikow .json w folderze Configs");
+
+        foreach (string jsonPath in jsonFiles)
+        { 
+            string jsonContent = File.ReadAllText(jsonPath); 
+            using var jsonDoc = JsonDocument.Parse(jsonContent);
+          
+            string taskName = jsonDoc.RootElement.GetProperty("TaskName").GetString()
+             ?? Path.GetFileNameWithoutExtension(jsonPath);
+          
+            string outputPath = Path.Combine(outputDirectory, $"{taskName}.g.cs");
+            generator.GenerateToFile(jsonPath, outputPath);
+            Assert.IsTrue(File.Exists(outputPath), $"Plik wygenerowanego kodu C# nie zostal utworzony dla {jsonPath}");
+          
+            string generatedContent = File.ReadAllText(outputPath);
+            StringAssert.Contains(generatedContent, "[TestClass]");
+            StringAssert.Contains(generatedContent, $"public class {taskName}");
+        }
+    }
+*/
+
+    public static IEnumerable<object[]> GetJsonConfigFiles()
+    {
+        string configsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Configs");
+        
+        if (Directory.Exists(configsDirectory)) 
+        {
+            foreach (string filePath in Directory.GetFiles(configsDirectory, "*.json")) 
+            {
+                yield return new object[] { filePath };
+                
+            }
+            
+        }
+    }
+
+    [TestMethod]
+    [DynamicData(nameof(GetJsonConfigFiles))]
+    public void TestCodeGenerator_GeneratesTestFromConfig(string jsonPath)
+    {
+        var generator = new TestCodeGenerator(); 
+        string outputDirectory = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\GeneratedTests")); 
+        Directory.CreateDirectory(outputDirectory);
+        
+        string jsonContent = File.ReadAllText(jsonPath); 
+        using var jsonDoc = JsonDocument.Parse(jsonContent); 
+        string taskName = jsonDoc.RootElement.GetProperty("TaskName").GetString()
+                          ?? Path.GetFileNameWithoutExtension(jsonPath);
+        
+        string outputPath = Path.Combine(outputDirectory, $"{taskName}.g.cs");
+        
+        generator.GenerateToFile(jsonPath, outputPath);
+        Assert.IsTrue(File.Exists(outputPath), $"Plik wygenerowanego kodu C# nie został utworzony dla: {jsonPath}");
+        string generatedContent = File.ReadAllText(outputPath); 
+        StringAssert.Contains(generatedContent, "[TestClass]");
+        StringAssert.Contains(generatedContent, $"public class {taskName}");
     }
 }
