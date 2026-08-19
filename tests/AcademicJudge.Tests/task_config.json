@@ -20,6 +20,14 @@
       "Input": [0, 0, 0],
       "ExpectedOutput": 0,
       "CustomTimeLimitMs": 100
+    },
+    {
+      "Name": "Kornel_test",
+      "Points": 1,
+      "IsHidden": true,
+      "Input": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "ExpectedOutput": 45,
+      "CustomTimeLimitMs": 100
     }
   ]
 }

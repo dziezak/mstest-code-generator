@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -37,8 +39,7 @@ public class CodeEmitter
     {
         int timeLimit = testCase.CustomTimeLimitMs ?? 1000;
 
-        sb.AppendLine(
-            $"    [AcademicTestMethod(TimeLimitMs = {timeLimit}, IsHidden = {testCase.IsHidden.ToString().ToLower()})]");
+        sb.AppendLine($"    [AcademicTestMethod(TimeLimitMs = {timeLimit}, IsHidden = {testCase.IsHidden.ToString().ToLower()})]");
         sb.AppendLine($"    [Points({testCase.Points})]");
 
         if (testCase.MaxOperations.HasValue)
@@ -70,47 +71,89 @@ public class CodeEmitter
 
         if (value is JsonElement element)
         {
-            switch (element.ValueKind)
+            return FormatJsonElement(element);
+        }
+
+        if (value is JsonNode node)
+        {
+            using JsonDocument doc = JsonDocument.Parse(node.ToJsonString());
+            return FormatJsonElement(doc.RootElement);
+        }
+
+        if (value is string str) return $"\"{EscapeString(str)}\"";
+        if (value is bool b) return b ? "true" : "false";
+        if (value is int || value is long || value is short || value is byte) return value.ToString()!;
+        if (value is double d) return $"{d.ToString(CultureInfo.InvariantCulture)}d";
+        if (value is float f) return $"{f.ToString(CultureInfo.InvariantCulture)}f";
+        if (value is decimal dec) return $"{dec.ToString(CultureInfo.InvariantCulture)}m";
+
+        if (value is IEnumerable enumerable)
+        {
+            var items = new List<string>();
+            foreach (var item in enumerable)
             {
-                case JsonValueKind.Array:
-                    var items = new List<string>();
-                    foreach (var item in element.EnumerateArray())
-                    {
-                        items.Add(FormatLiteral(item));
-                    }
-                    return $"new[] {{ {string.Join(", ", items)} }}";
-
-                case JsonValueKind.String:
-                    return $"\"{element.GetString()}\"";
-
-                case JsonValueKind.Number:
-                    return element.GetRawText();
-
-                case JsonValueKind.True:
-                    return "true";
-
-                case JsonValueKind.False:
-                    return "false";
-
-                case JsonValueKind.Null:
-                case JsonValueKind.Undefined:
-                    return "null";
-
-                default:
-                    return element.GetRawText();
+                items.Add(FormatLiteral(item));
             }
+
+            var type = value.GetType();
+            if (type.IsArray)
+            {
+                string elementType = type.GetElementType()?.Name ?? "var";
+                return $"new {elementType}[] {{ {string.Join(", ", items)} }}";
+            }
+
+            return $"new[] {{ {string.Join(", ", items)} }}";
         }
 
-        if (value is string str)
+        string json = JsonSerializer.Serialize(value);
+        string escapedJson = json.Replace("\"", "\"\"");
+        string typeName = value.GetType().FullName ?? "object";
+
+        return $"System.Text.Json.JsonSerializer.Deserialize<{typeName}>(@\"{escapedJson}\")!";
+    }
+
+    private string FormatJsonElement(JsonElement element)
+    {
+        switch (element.ValueKind)
         {
-            return $"\"{str}\"";
-        }
+            case JsonValueKind.String:
+                return $"\"{EscapeString(element.GetString() ?? string.Empty)}\"";
 
-        if (value is bool b)
-        {
-            return b ? "true" : "false";
-        }
+            case JsonValueKind.Number:
+                return element.GetRawText();
 
-        return JsonSerializer.Serialize(value);
+            case JsonValueKind.True:
+                return "true";
+
+            case JsonValueKind.False:
+                return "false";
+
+            case JsonValueKind.Null:
+            case JsonValueKind.Undefined:
+                return "null";
+
+            case JsonValueKind.Array:
+                var items = new List<string>();
+                foreach (var item in element.EnumerateArray())
+                {
+                    items.Add(FormatJsonElement(item));
+                }
+                return $"new[] {{ {string.Join(", ", items)} }}";
+
+            case JsonValueKind.Object:
+            default:
+                string rawJson = element.GetRawText().Replace("\"", "\"\"");
+                return $"System.Text.Json.JsonSerializer.Deserialize<object>(@\"{rawJson}\")!";
+        }
+    }
+
+    private string EscapeString(string input)
+    {
+        return input
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"")
+            .Replace("\n", "\\n")
+            .Replace("\r", "\\r")
+            .Replace("\t", "\\t");
     }
 }

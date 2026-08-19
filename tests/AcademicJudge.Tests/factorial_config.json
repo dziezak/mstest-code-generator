@@ -1,0 +1,28 @@
+{
+  "TaskName": "GeneratedFactorialTests",
+  "TargetNamespace": "AcademicJudge.Tests",
+  "StudentClassName": "StudentSolution",
+  "MethodName": "Solve",
+  "ProfessorAssemblyPath": "AcademicJudge.Tests.dll",
+  "ProfessorClassName": "AcademicJudge.Tests.FactorialProfessorSolution",
+  "TestCases": [
+    {
+      "Name": "Test_Factorial_Zero",
+      "Input": 0,
+      "ExpectedOutput": 1,
+      "Points": 2
+    },
+    {
+      "Name": "Test_Factorial_Five",
+      "Input": 5,
+      "ExpectedOutput": null,
+      "Points": 5
+    },
+    {
+      "Name": "Test_Factorial_Seven",
+      "Input": 7,
+      "ExpectedOutput": null,
+      "Points": 5
+    }
+  ]
+}

@@ -8,30 +8,15 @@ using AcademicJudge.Attributes;
 namespace AcademicJudge.Tests;
 
 [TestClass]
-public class GeneratedTask01Tests
+public class GeneratedFactorialTests
 {
-    [AcademicTestMethod(TimeLimitMs = 300, IsHidden = false)]
-    [Points(5)]
-    public void Test_SumArray_Basic()
-    {
-        // Arrange
-        var input = new[] { 1, 2, 3, 4 };
-        var expectedOutput = 10;
-        var studentSolution = new StudentSolution();
-
-        var actualOutput = studentSolution.Solve(input);
-
-         // Assert
-        Assert.AreEqual(expectedOutput, actualOutput);
-    }
-
-    [AcademicTestMethod(TimeLimitMs = 100, IsHidden = true)]
+    [AcademicTestMethod(TimeLimitMs = 1000, IsHidden = false)]
     [Points(2)]
-    public void Test_SumArray_Zeros()
+    public void Test_Factorial_Zero()
     {
         // Arrange
-        var input = new[] { 0, 0, 0 };
-        var expectedOutput = 0;
+        var input = 0;
+        var expectedOutput = 1;
         var studentSolution = new StudentSolution();
 
         var actualOutput = studentSolution.Solve(input);
@@ -40,13 +25,28 @@ public class GeneratedTask01Tests
         Assert.AreEqual(expectedOutput, actualOutput);
     }
 
-    [AcademicTestMethod(TimeLimitMs = 100, IsHidden = true)]
-    [Points(1)]
-    public void Kornel_test()
+    [AcademicTestMethod(TimeLimitMs = 1000, IsHidden = false)]
+    [Points(5)]
+    public void Test_Factorial_Five()
     {
         // Arrange
-        var input = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-        var expectedOutput = 45;
+        var input = 5;
+        var expectedOutput = 120;
+        var studentSolution = new StudentSolution();
+
+        var actualOutput = studentSolution.Solve(input);
+
+         // Assert
+        Assert.AreEqual(expectedOutput, actualOutput);
+    }
+
+    [AcademicTestMethod(TimeLimitMs = 1000, IsHidden = false)]
+    [Points(5)]
+    public void Test_Factorial_Seven()
+    {
+        // Arrange
+        var input = 7;
+        var expectedOutput = 5040;
         var studentSolution = new StudentSolution();
 
         var actualOutput = studentSolution.Solve(input);

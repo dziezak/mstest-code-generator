@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using AcademicJudge.Generator.Models;
 using AcademicJudge.Generator.Services;
 
@@ -19,6 +20,15 @@ public class TestCodeGenerator
 
         var config = JsonSerializer.Deserialize<TaskConfig>(jsonContent, options)
                      ?? throw new InvalidOperationException("Couldn't deserialize JSON file with current configuration");
+
+        foreach (var testCase in config.TestCases)
+        {
+            if (testCase.ExpectedOutput == null)
+            {
+                object? result = ProfessorExecutor.Execute(config, testCase.Input);
+                testCase.ExpectedOutput = result as JsonNode ?? JsonSerializer.SerializeToNode(result);
+            }
+        }
 
         return _codeEmitter.Emit(config);
     }
